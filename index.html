@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miel & mug — slow coffee & ceramics</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <style>
+    :root {
+      --bg: #faf7f2;
+      --card-bg: #ffffff;
+      --accent: #d4a373;
+      --accent-dark: #bc6c25;
+      --text: #2f2a26;
+      --text-muted: #7d756e;
+      --border: #ede4db;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 100px;
+    }
+
+    header {
+      text-align: center;
+      padding: 70px 20px 45px;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 300;
+      letter-spacing: 3px;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      margin-bottom: 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(212, 163, 115, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(212, 163, 115, 0.16);
+    }
+
+    /* Pinterest odaklı kare/orta en-boy oranı */
+    .card-img-wrapper {
+      width: 100%;
+      height: 290px;
+      background-color: #f5efe8;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.5s ease;
+    }
+
+    .card:hover .card-img-wrapper img {
+      transform: scale(1.05);
+    }
+
+    .card-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+      flex: 1;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .price {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+    }
+
+    .btn {
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 24px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-dark);
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    /* CHAT WIDGET */
+    #studio-chat-btn {
+      position: fixed;
+      bottom: 26px;
+      right: 26px;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      font-size: 26px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(212, 163, 115, 0.45);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+
+    #studio-chat-btn:hover {
+      transform: scale(1.08);
+    }
+
+    #studio-chat-box {
+      position: fixed;
+      bottom: 102px;
+      right: 26px;
+      width: 360px;
+      height: 500px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 99999;
+    }
+
+    #studio-chat-header {
+      background: #f7f1eb;
+      padding: 16px 20px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #studio-chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 14px;
+      background: #faf7f2;
+    }
+
+    .studio-msg {
+      padding: 10px 15px;
+      border-radius: 14px;
+      max-width: 82%;
+      line-height: 1.45;
+    }
+
+    .studio-msg.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .studio-msg.bot {
+      align-self: flex-start;
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    #studio-chat-input-area {
+      display: flex;
+      padding: 14px;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    #studio-chat-input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 10px 16px;
+      outline: none;
+      font-size: 14px;
+      background: #faf7f2;
+    }
+
+    #studio-chat-input:focus {
+      border-color: var(--accent);
+    }
+
+    #studio-chat-send {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease;
+    }
+
+    #studio-chat-send:hover {
+      background-color: var(--accent-dark);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>miel & mug</h1>
+    <p>slow-crafted ceramics & specialty roasts</p>
+  </header>
+
+  <main class="container">
+    <div class="products-grid">
+      <!-- Product 1: Cloud Chubby Mug -->
+      <div class="card">
+        <div class="card-img-wrapper">
+          <img src="https://images.unsplash.com/photo-1577937927133-66ef06acdf18?q=80&w=800&auto=format&fit=crop" alt="Aesthetic Ceramic Mug">
+        </div>
+        <div class="card-body">
+          <h3>Cloud Chubby Mug</h3>
+          <p>Hand-thrown 320ml pastel porcelain mug with a tactile matte finish. Microwave and dishwasher safe ☁️✨.</p>
+          <div class="price-row">
+            <span class="price">$28</span>
+            <button class="btn" onclick="toggleModal()">Ask Studio</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2: Peach Honey Beans -->
+      <div class="card">
+        <div class="card-img-wrapper">
+          <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop" alt="Artisan Coffee Beans">
+        </div>
+        <div class="card-body">
+          <h3>Peach Honey Beans</h3>
+          <p>250g whole coffee beans. Light roast Ethiopian single-origin with delicate notes of peach blossom and raw honey 🍑☕.</p>
+          <div class="price-row">
+            <span class="price">$18</span>
+            <button class="btn" onclick="toggleModal()">Ask Studio</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3: Butter Dripper Set -->
+      <div class="card">
+        <div class="card-img-wrapper">
+          <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop" alt="Aesthetic Pour Over Coffee Dripper">
+        </div>
+        <div class="card-body">
+          <h3>Butter Dripper Set</h3>
+          <p>Ribbed ceramic pour-over cone paired with an amber glass server for slow, intentional mornings 🍯✨.</p>
+          <div class="price-row">
+            <span class="price">$44</span>
+            <button class="btn" onclick="toggleModal()">Ask Studio</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- CHAT WIDGET -->
+  <div id="studio-chat-box">
+    <div id="studio-chat-header">
+      <span>miel & mug concierge ☕✨</span>
+      <span id="studio-chat-close" style="cursor:pointer; font-size: 22px;" onclick="toggleModal()">×</span>
+    </div>
+    <div id="studio-chat-messages">
+      <div class="studio-msg bot">Hi there! ☕✨ Welcome to miel & mug. How can I help you today? 🤍</div>
+    </div>
+    <div id="studio-chat-input-area">
+      <input type="text" id="studio-chat-input" placeholder="Ask about ceramics, coffee, shipping...">
+      <button id="studio-chat-send">➤</button>
+    </div>
+  </div>
+
+  <button id="studio-chat-btn" onclick="toggleModal()">☕</button>
+
+  <script>
+    function toggleModal() {
+      const box = document.getElementById('studio-chat-box');
+      if (!box) return;
+      const isOpen = box.style.display === 'flex';
+      box.style.display = isOpen ? 'none' : 'flex';
+      if (!isOpen) {
+        document.getElementById('studio-chat-input').focus();
+      }
+    }
+
+    (function() {
+      const sendBtn = document.getElementById('studio-chat-send');
+      const input = document.getElementById('studio-chat-input');
+      const messages = document.getElementById('studio-chat-messages');
+
+      function appendMsg(text, type) {
+        const d = document.createElement('div');
+        d.className = `studio-msg ${type}`;
+        d.textContent = text;
+        messages.appendChild(d);
+        messages.scrollTop = messages.scrollHeight;
+        return d;
+      }
+
+      async function sendMsg() {
+        const val = input.value.trim();
+        if (!val) return;
+
+        appendMsg(val, 'user');
+        input.value = '';
+
+        const waiting = appendMsg('brewing a reply... ☕✨', 'bot');
+
+        try {
+          const res = await fetch('http://127.0.0.1:8000/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: val })
+          });
+          const data = await res.json();
+          waiting.remove();
+          appendMsg(data.reply, 'bot');
+        } catch (err) {
+          waiting.remove();
+          appendMsg('Could not reach the server! Is app.py running? ❌', 'bot');
+        }
+      }
+
+      sendBtn.addEventListener('click', sendMsg);
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMsg();
+      });
+    })();
+  </script>
+</body>
+</html>
