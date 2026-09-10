@@ -1,4 +1,4 @@
-# miel & mug
+# Miel & Mug
 
 Küçük bir kahve ve seramik dükkanı konsepti için yaptığım web projesi. Ön yüzde ürün vitrini ve mesajlaşma kutusu var; arka yüzde FastAPI ve Gemini API ile çalışan bir chatbot bulunuyor.
 
